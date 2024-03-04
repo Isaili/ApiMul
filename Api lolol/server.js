@@ -39,8 +39,8 @@ app.get("/", (req, res) => {
 });
 
 // routes
-require("./app/routes/Producto.auth.routes")(app);
-require("./app/routes/Producto.routes")(app);
+ require("./app/routes/Admin.routes")(app);
+ require("./app/routes/auth.Admin.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
@@ -52,13 +52,13 @@ function initial() {
   Role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
       new Role({
-        name: "producto"
+        name: "admin"
       }).save(err => {
         if (err) {
           console.log("error", err);
         }
 
-        console.log("added 'producto' to roles collection");
+        console.log("added 'admin' to roles collection");
       });
 
       new Role({

@@ -1,7 +1,7 @@
-const uthJwt = require("./Producto.authJwt");
-const ProductoverifySignUp = require("./productoverifySignUp");
+const authJwte = require("./Admin.authJwt")
+const AdminverifySignUp = require("./AdminverifySignUp")
 
 module.exports = {
-  uthJwt,
-  ProductoverifySignUp
+  authJwte,
+  AdminverifySignUp
 };
