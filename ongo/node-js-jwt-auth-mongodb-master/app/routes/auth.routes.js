@@ -1,5 +1,6 @@
 const { SocioverifySignUp } = require("../middlewares");
 const controller = require("../controllers/Socioauth.controller");
+const { authJwt } = require("../middlewares");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -20,4 +21,6 @@ module.exports = function(app) {
   );
 
   app.post("/api/socio/signin", controller.signin);
+   app.put("/api/socio/update/:socioname", [authJwt.verifyToken], controller.update);
+  app.delete("/api/socio/delete/:socioname", [authJwt.verifyToken], controller.delete);
 };

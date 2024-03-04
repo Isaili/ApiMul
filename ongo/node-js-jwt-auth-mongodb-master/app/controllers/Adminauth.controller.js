@@ -1,19 +1,19 @@
-const config = require("../config/Socio.auth.config");
+const config = require("../config/db.config");
 const db = require("../models");
-const Socio = db.socio;
+const Admin = db.admin;
 const Role = db.role;
 
-let jwt = require("jsonwebtoken");
-let bcrypt = require("bcryptjs");
+let jwte = require("jsonwebtoken");
+let bcrypte = require("bcryptjs");
 
 exports.signup = (req, res) => {
-  const socio = new Socio({
-    socioname: req.body.socioname,
+  const admin = new Admin({
+    adminname: req.body.adminname,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypte.hashSync(req.body.password, 8)
   });
 
-  socio.save((err, socio) => {
+  admin.save((err, admin) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
@@ -30,32 +30,32 @@ exports.signup = (req, res) => {
             return;
           }
 
-          socio.roles = roles.map(role => role._id);
-          socio.save(err => {
+          admin.roles = roles.map(role => role._id);
+          admin.save(err => {
             if (err) {
               res.status(500).send({ message: err });
               return;
             }
 
-            res.send({ message: "Socio was registered successfully!" });
+            res.send({ message: "admin was registered successfully!" });
           });
         }
       );
     } else {
-      Role.findOne({ name: "socio" }, (err, role) => {
+      Role.findOne({ name: "admin" }, (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-        socio.roles = [role._id];
-        socio.save(err => {
+        admin.roles = [role._id];
+        admin.save(err => {
           if (err) {
             res.status(500).send({ message: err });
             return;
           }
 
-          res.send({ message: "socio was registered successfully!" });
+          res.send({ message: "admin  was registered successfully!" });
         });
       });
     }
@@ -63,23 +63,23 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  Socio.findOne({
-    socioname: req.body.socioname
+  Admin.findOne({
+    adminname: req.body.adminname
   })
     .populate("roles", "-__v")
-    .exec((err,socio) => {
+    .exec((err,admin) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
 
-      if (!socio) {
-        return res.status(404).send({ message: "socio Not found." });
+      if (!admin) {
+        return res.status(404).send({ message: "admin Not found." });
       }
 
-      let passwordIsValid = bcrypt.compareSync(
+      let passwordIsValid = bcrypte.compareSync(
         req.body.password,
-        socio.password
+        admin.password
       );
 
       if (!passwordIsValid) {
@@ -89,7 +89,7 @@ exports.signin = (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: socio.id },
+      const token = jwte.sign({ id: admin.id },
                               config.secret,
                               {
                                 algorithm: 'HS256',
@@ -99,51 +99,49 @@ exports.signin = (req, res) => {
 
       let authorities = [];
 
-      for (let i = 0; i < socio.roles.length; i++) {
-        authorities.push("ROLE_" + socio.roles[i].name.toUpperCase());
+      for (let i = 0; i < admin.roles.length; i++) {
+        authorities.push("ROLE_" + admin.roles[i].name.toUpperCase());
       }
       res.status(200).send({
-        id: socio._id,
-        socioname: socio.socioname,
-        email: socio.email,
+        id: admin._id,
+        adminname: admin.adminname,
+        email: admin.email,
         roles: authorities,
         accessToken: token
       });
     });
 };
-// ... Código anterior ...
-//socio
-exports.update = (req, res) => {
-  Socio.findOneAndUpdate(
-    { socioname: req.params.socioname },
+exports.updateAdmin = (req, res) => {
+  Admin.findOneAndUpdate(
+    { adminname: req.params.adminname },
     {
-      socioname: req.body.socioname,
+      adminname: req.body.adminname,
       email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 8)
     },
     { new: true },
-    (err, socio) => {
+    (err, admin) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
-      if (!socio) {
-        return res.status(404).send({ message: "Socio not found." });
+      if (!admin) {
+        return res.status(404).send({ message: "Admin no encontrado." });
       }
-      res.status(200).send({ message: "Socio updated successfully!" });
+      res.send({ message: "Admin actualizado exitosamente." });
     }
   );
 };
 
-exports.delete = (req, res) => {
-  Socio.findOneAndRemove({ socioname: req.params.socioname }, (err, socio) => {
+
+exports.deleteAdmin = (req, res) => {
+  Admin.findOneAndRemove({ adminname: req.params.adminname }, (err, admin) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
     }
-    if (!socio) {
-      return res.status(404).send({ message: "Socio not found." });
+    if (!admin) {
+      return res.status(404).send({ message: "Admin no encontrado." });
     }
-    res.status(200).send({ message: "Socio deleted successfully!" });
+    res.send({ message: "Admin eliminado exitosamente." });
   });
 };

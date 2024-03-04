@@ -12,7 +12,7 @@ module.exports = function(app) {
 
   app.get("/api/test/all", controller.allAccess);
 
-  app.get("/api/test/soio", [authJwt.verifyToken], controller.socioBoard);
+  app.get("/api/test/soio", [authJwt.verifyToken], controller.socioBoard); //soio que pedos no se como se llego alli pero no le muevo nada nanananj
 
   app.get(
     "/api/test/mod",
@@ -25,4 +25,5 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
+ 
 };
