@@ -18,6 +18,7 @@ export const getProducts = async (req, res) => {
     try {
         const ProductsSaved = await Products.find()
         return res.status(200).json(ProductsSaved);
+        
     } catch (error) {
         return res.status(500).json({ message: "Error server" });
     }

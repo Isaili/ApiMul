@@ -12,7 +12,7 @@ createRoles();
 app.use(morgan('dev')); //registrar informacion sobre las solicitudes hhtp
 
 const corsOptions = {
-    origin: ['http://localhost:4000'],
+    origin: '*',
     methods: 'GET,PUT,PATCH,POST,DELETE', 
     allowedHeaders: 'Content-Type,Authorization', 
     credentials: true 
